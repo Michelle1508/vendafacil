@@ -16,7 +16,7 @@ const novaRequisicao = (metodo, url, responsetype, parametros) => {
       }
     }
 
-    req.onerror = () =>{
+    req.onerror = () => {
       reject(req.response);
     }
 
@@ -28,8 +28,8 @@ const novaRequisicao = (metodo, url, responsetype, parametros) => {
 
 const carregarFormulario = (urlHtml, urlCSS) => {
 
-  novaRequisicao('GET',urlHtml, 'document',null).then((valorHtml) => {
-   
+  novaRequisicao('GET', urlHtml, 'document', null).then((valorHtml) => {
+
     const body = document.body;
 
     const mainHtml = document.createElement('div');
@@ -38,8 +38,8 @@ const carregarFormulario = (urlHtml, urlCSS) => {
     mainHtml.appendChild(valorHtml.body);
     body.appendChild(mainHtml);
 
-    if (urlCSS){
-      novaRequisicao('GET', urlCSS,'text',null).then((valorcss) =>{
+    if (urlCSS) {
+      novaRequisicao('GET', urlCSS, 'text', null).then((valorcss) => {
         const estiloPrincipal = document.createElement('style');
         estiloPrincipal.id = 'estiloPrincipal';
         estiloPrincipal.innerHTML = valorcss;
