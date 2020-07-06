@@ -24,8 +24,6 @@ const novaRequisicao = (metodo, url, responsetype, parametros) => {
   })
 }
 
-
-
 const carregarFormulario = (urlHtml, urlCSS) => {
 
   novaRequisicao('GET', urlHtml, 'document', null).then((valorHtml) => {
