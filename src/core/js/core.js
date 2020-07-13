@@ -24,17 +24,22 @@ const novaRequisicao = (metodo, url, responsetype, parametros) => {
   })
 }
 
-const carregarFormulario = (urlHtml, urlCSS) => {
+const carregarFormulario = (urlHtml, urlCSS, urlJS) => {
 
   novaRequisicao('GET', urlHtml, 'document', null).then((valorHtml) => {
 
     const body = document.body;
+    const mainHtml = document.getElementById("mainHtml");
 
-    const mainHtml = document.createElement('div');
-    mainHtml.id = 'mainHtml';
-    mainHtml.className = 'container';
-    mainHtml.appendChild(valorHtml.body);
-    body.appendChild(mainHtml);
+    if (mainHtml) {
+      body.removeChild(mainHtml);
+    }
+
+    const divHtml = document.createElement('div');
+    divHtml.id = 'mainHtml';
+    divHtml.className = 'container';
+    divHtml.appendChild(valorHtml.body);
+    body.appendChild(divHtml);
 
     if (urlCSS) {
       novaRequisicao('GET', urlCSS, 'text', null).then((valorcss) => {
@@ -45,6 +50,73 @@ const carregarFormulario = (urlHtml, urlCSS) => {
       })
     }
 
+    if (urlJS) {
+      const scriptPrincipal = document.createElement('script');
+      scriptPrincipal.id = "scriptPrincipal";
+      scriptPrincipal.src = urlJS;
+      body.appendChild(scriptPrincipal);  
+    }
+
   })
+
+}
+
+const listarRegistros = (dados, totalcolunas,corpo, acaoEditar, acaoRemover) =>{
+
+  while (corpo.firstChild){
+    corpo.removeChild(corpo.lastChild);
+  }
+
+  for (let index = 0; index < dados.length; index++) {
+    const elemento = dados[index];
+    const linha = document.createElement("tr");
+
+    let indice_coluna = 0;
+
+    for (const nomepropriedade in elemento) {
+
+      if (indice_coluna === totalcolunas){
+        break;
+      }
+
+      const propriedade = elemento[nomepropriedade];
+      const coluna = document.createElement("td");
+
+      coluna.innerText = propriedade;
+      linha.appendChild(coluna);
+
+      indice_coluna++;
+    }
+    
+    if ((acaoEditar) || (acaoRemover)){
+      
+      const colunaBotoes = document.createElement("td");
+
+      if (acaoEditar){
+        const botaoEditar = document.createElement("button");
+        botaoEditar.innerHTML = 'Editar';
+        botaoEditar.className = 'btn btn-outline-primary';
+        botaoEditar.onclick = () => acaoEditar(elemento);
+        colunaBotoes.appendChild(botaoEditar);
+
+        if(acaoRemover){
+          botaoEditar.style.marginRight = '10px';
+        }
+      }
+
+      if (acaoRemover){
+        const botaoRemover = document.createElement("button");
+        botaoRemover.innerHTML = 'Remover';
+        botaoRemover.className = 'btn btn-outline-danger';
+        botaoRemover.onclick = () => acaoRemover(elemento);
+        colunaBotoes.appendChild(botaoRemover);
+      }
+
+      linha.appendChild(colunaBotoes);
+    }
+
+    corpo.appendChild(linha);
+    
+  }
 
 }
